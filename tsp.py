@@ -13,90 +13,63 @@ import pandas as pd
 import numpy as np
 
 
-class KnapsackProblem:
+class TravelingSalesman:
 
-    def __init__(self):
-        self.items = []
-        self.maxCapacikty = 0
+    def __init__(self, name):
+        self.distances = []
         self.initData()
 
     def __len__(self):
-        return len(self.items)
+        return len(self.distances)
 
     def initData(self):
 
-        self.items = [
-            ("1", 23, 92),
-            ("2", 31, 57),
-            ("3", 29, 49),
-            ("4", 44, 68),
-            ("5", 53, 60),
-            ("6", 38, 43),
-            ("7", 63, 67),
-            ("8", 85, 84),
-            ("9", 89, 87),
-            ("10", 82, 72)     
-        ]
+        self.distances = [  [0, 10, 15, 20], 
+                            [10, 0, 35, 25], 
+                            [15, 35, 0, 30], 
+                            [20, 25, 30, 0] ]
 
-        self.maxWeight = 165
-
-    def getValue(self, zeroOneList):
-
-        totalWeight = totalValue = 0
-
-        for i in range(len(zeroOneList)):
-            item, weight, value = self.items[i]
-            totalWeight += zeroOneList[i] * weight
-            totalValue += zeroOneList[i] * value
-        
-        if totalWeight<= 165 :
-            return totalValue
-        else:
-            return max(0, totalValue + 3*(165-totalWeight))
+    def getDistance(self, indices):
+        totalDistance = 0
+        #indices = [1,3,4,2]
+        for i in range(len(indices-1)):
+            totalDistance += self.distances[indices[i]][indices[i+1]]
+            
+        return totalDistance
 
 
-    def printItems(self, binaryList):
+    def printResult(self, indices):
+        print("Best route = ", indices)
+        print("Total distance = ", getDistance(indices))
 
-        totalWeight = totalValue = 0
-
-        for i in range(len(binaryList)):
-            item, weight, value = self.items[i]
-            if totalWeight + weight <= self.maxWeight:
-                if binaryList[i] > 0:
-                    totalWeight += weight
-                    totalValue += value
-                    print("Item {}: weight = {}, value = {}, current knapsack weight = {}, current knapsack value = {}".format(item, weight, value, totalWeight, totalValue))
-        
-        print("Total weight = ", totalWeight)
-        print("Total value = ", totalValue)
 
 #create instance of knapsack problem class
-knapsack = KnapsackProblem()
+tsp = TravelingSalesman()
 
-creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMax)
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
 
 toolbox = base.Toolbox()
 
 
 # evaluation function
 def func_eval(individual):
-    return knapsack.getValue(individual),  
+    return tsp.getDistance(individual),  
 
 
-toolbox.register("select", tools.selRoulette)
-toolbox.register("mate", tools.cxOnePoint)
-toolbox.register("mutate", tools.mutFlipBit, indpb=0.1)
+toolbox.register("select", tools.selTournament, tournsize=2)
+toolbox.register("mate", tools.cxOrdered)
+toolbox.register("mutate", tools.mutShuffleIndexes, indpb=1.0/len(tsp))
 toolbox.register("evaluate", func_eval)
 
-toolbox.register("attribute", random.randint, a=0, b=1)
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attribute, n=10)
+toolbox.register("randomOrder", random.sample, range(len(tsp)), len(tsp))
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.randomOrder)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 
 def main():
 
-    pop = toolbox.population(n=10)
+    pop = toolbox.population(n=100)
 
     #statistics
     stats = tools.Statistics(key=lambda ind: ind.fitness.values)
@@ -132,8 +105,8 @@ def main():
     print("Best Ever Individual = ", best)
     print("Best Ever Fitness = ", best.fitness.values[0])
 
-    print("--- Knapsack Items Chosen --- ")
-    knapsack.printItems(best)
+    print("--- TSP best route --- ")
+    tsp.printItems(best)
 
     df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
     print(df_promedios.to_string())
@@ -175,7 +148,7 @@ def main():
     print("Best Ever Individual = ", best)
     print("Best Ever Fitness = ", best.fitness.values[0])
 
-    print("--- Knapsack Items Chosen --- ")
+    print("--- TSP best route --- ")
     knapsack.printItems(best)
 
     df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
@@ -219,7 +192,7 @@ def main():
     print("Best Ever Individual = ", best)
     print("Best Ever Fitness = ", best.fitness.values[0])
 
-    print("--- Knapsack Items Chosen --- ")
+    print("--- TSP best route --- ")
     knapsack.printItems(best)
 
 
