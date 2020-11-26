@@ -105,7 +105,7 @@ def main():
 
     df = pd.DataFrame()
     for i in range (10):
-        pop, log = algorithms.eaSimple(pop, toolbox, 1.0, 0.5, 100, stats=stats, halloffame=hof)
+        pop, log = algorithms.eaSimple(pop, toolbox, 1.0, 0.5, 1000, stats=stats, halloffame=hof)
         df2 = pd.DataFrame(log)
         df2['algoritmo'] = 'eaSimple'
         df2['corrida'] = i
@@ -113,9 +113,9 @@ def main():
 
     df = df.reset_index(drop=True)
 
-    for i in range(1010):
-        if i > 0 and df.at[i, 'max'] < df.at[i-1, 'max']:
-            df.at[i, 'max'] = df.at[i-1, 'max']
+    for i in range(10010):
+        if i > 0 and df.at[i, 'min'] > df.at[i-1, 'min']:
+            df.at[i, 'min'] = df.at[i-1, 'min']
 
     print(df.to_string())
 
@@ -127,13 +127,13 @@ def main():
     print("--- TSP best route --- ")
     tsp.printResult(best)
 
-    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
+    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'min':['mean', 'std']})
     print(df_promedios.to_string())
 
     x = df['gen'].unique()
 
-    promedios = df_promedios['max']['mean'].values
-    desviacion = df_promedios['max']['std'].values
+    promedios = df_promedios['min']['mean'].values
+    desviacion = df_promedios['min']['std'].values
     plt.plot(x, promedios, color='r')
     plt.plot(x, promedios - desviacion, linestyle = '--', color='b')
     plt.plot(x, promedios + desviacion, linestyle = '--', color='g')
@@ -148,7 +148,7 @@ def main():
     hof2 = tools.HallOfFame(1)
     df = pd.DataFrame()
     for i in range (10):
-        pop, log = algorithms.eaMuPlusLambda(pop, toolbox, 5, 10, 0.5, 0.5, 100, stats=stats, halloffame=hof2)
+        pop, log = algorithms.eaMuPlusLambda(pop, toolbox, 5, 10, 0.5, 0.5, 1000, stats=stats, halloffame=hof2)
         df2 = pd.DataFrame(log)
         df2['algoritmo'] = 'eaMuPlusLambda'
         df2['corrida'] = i
@@ -156,9 +156,9 @@ def main():
 
     df = df.reset_index(drop=True)
 
-    for i in range(1010):
-        if i > 0 and df.at[i, 'max'] < df.at[i-1, 'max']:
-            df.at[i, 'max'] = df.at[i-1, 'max']
+    for i in range(10010):
+        if i > 0 and df.at[i, 'min'] > df.at[i-1, 'min']:
+            df.at[i, 'min'] = df.at[i-1, 'min']
 
     print(df.to_string())
 
@@ -170,13 +170,13 @@ def main():
     print("--- TSP best route --- ")
     tsp.printResult(best)
 
-    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
+    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'min':['mean', 'std']})
     print(df_promedios.to_string())
 
     x = df['gen'].unique()
 
-    promedios = df_promedios['max']['mean'].values
-    desviacion = df_promedios['max']['std'].values
+    promedios = df_promedios['min']['mean'].values
+    desviacion = df_promedios['min']['std'].values
     plt.plot(x, promedios, color='r')
     plt.plot(x, promedios - desviacion, linestyle = '--', color='b')
     plt.plot(x, promedios + desviacion, linestyle = '--', color='g')
@@ -191,7 +191,7 @@ def main():
     hof3 = tools.HallOfFame(1)
     df = pd.DataFrame()
     for i in range (10):
-        pop, log = algorithms.eaMuCommaLambda(pop, toolbox, 5, 10, 0.5, 0.5, 100, stats=stats, halloffame=hof3)
+        pop, log = algorithms.eaMuCommaLambda(pop, toolbox, 5, 10, 0.5, 0.5, 1000, stats=stats, halloffame=hof3)
         df2 = pd.DataFrame(log)
         df2['algoritmo'] = 'eaMuCommaLambda'
         df2['corrida'] = i
@@ -199,9 +199,9 @@ def main():
 
     df = df.reset_index(drop=True)
 
-    for i in range(1010):
-        if i > 0 and df.at[i, 'max'] < df.at[i-1, 'max']:
-            df.at[i, 'max'] = df.at[i-1, 'max']
+    for i in range(10010):
+        if i > 0 and df.at[i, 'min'] > df.at[i-1, 'min']:
+            df.at[i, 'min'] = df.at[i-1, 'min']
 
     
     print(df.to_string())
@@ -215,13 +215,13 @@ def main():
     tsp.printResult(best)
 
 
-    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
+    df_promedios = df.groupby(['algoritmo', 'gen']).agg({'min':['mean', 'std']})
     print(df_promedios.to_string())
 
     x = df['gen'].unique()
 
-    promedios = df_promedios['max']['mean'].values
-    desviacion = df_promedios['max']['std'].values
+    promedios = df_promedios['min']['mean'].values
+    desviacion = df_promedios['min']['std'].values
     plt.plot(x, promedios, color='r')
     plt.plot(x, promedios - desviacion, linestyle = '--', color='b')
     plt.plot(x, promedios + desviacion, linestyle = '--', color='g')
@@ -230,6 +230,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-    
