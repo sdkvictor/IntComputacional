@@ -15,7 +15,7 @@ import numpy as np
 
 class TravelingSalesman:
 
-    def __init__(self, name):
+    def __init__(self):
         self.distances = []
         self.initData()
 
@@ -24,23 +24,43 @@ class TravelingSalesman:
 
     def initData(self):
 
-        self.distances = [  [0, 10, 15, 20], 
-                            [10, 0, 35, 25], 
-                            [15, 35, 0, 30], 
-                            [20, 25, 30, 0] ]
+        #self.distances = [[0, 10, 15, 20], [10, 0, 35, 25], [15, 35, 0, 30], [20, 25, 30, 0]]
+        self.distances = [
+            [0, 2451, 713, 1018, 1631, 1374, 2408, 213, 2571, 875, 1420, 2145],
+            [2451, 0, 1745, 1524, 831, 1240, 959, 2596, 403, 1589, 1374, 357],
+            [713, 1745, 0, 355, 920, 803, 1737, 851, 1858, 262, 940, 1453],
+            [1018, 1524, 355, 0, 700, 862, 1395, 1123, 1584, 466, 1056, 1280],
+            [1631, 831, 920, 700, 0, 663, 1021, 1769, 949, 796, 879, 586],
+            [1374, 1240, 803, 862, 663, 0, 1681, 1551, 1765, 547, 225, 887],
+            [2408, 959, 1737, 1395, 1021, 1681, 0, 2493, 678, 1724, 1891, 1114],
+            [213, 2596, 851, 1123, 1769, 1551, 2493, 0, 2699, 1038, 1605, 2300],
+            [2571, 403, 1858, 1584, 949, 1765, 678, 2699, 0, 1744, 1645, 653],
+            [875, 1589, 262, 466, 796, 547, 1724, 1038, 1744, 0, 679, 1272],
+            [1420, 1374, 940, 1056, 879, 225, 1891, 1605, 1645, 679, 0, 1017],
+            [2145, 357, 1453, 1280, 586, 887, 1114, 2300, 653, 1272, 1017, 0],     
+        ]
+  
 
     def getDistance(self, indices):
         totalDistance = 0
         #indices = [1,3,4,2]
-        for i in range(len(indices-1)):
+        for i in range(len(indices)-1):
             totalDistance += self.distances[indices[i]][indices[i+1]]
+        
+        totalDistance += self.distances[indices[len(indices)-1]][indices[0]]
             
         return totalDistance
 
 
     def printResult(self, indices):
         print("Best route = ", indices)
-        print("Total distance = ", getDistance(indices))
+        totalDistance = 0
+        #indices = [1,3,4,2]
+        for i in range(len(indices)-1):
+            totalDistance += self.distances[indices[i]][indices[i+1]]
+        
+        totalDistance += self.distances[indices[len(indices)-1]][indices[0]]
+        print("Total distance = ", totalDistance)
 
 
 #create instance of knapsack problem class
@@ -63,13 +83,13 @@ toolbox.register("mutate", tools.mutShuffleIndexes, indpb=1.0/len(tsp))
 toolbox.register("evaluate", func_eval)
 
 toolbox.register("randomOrder", random.sample, range(len(tsp)), len(tsp))
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.randomOrder)
+toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.randomOrder)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 
 def main():
 
-    pop = toolbox.population(n=100)
+    pop = toolbox.population(n=10)
 
     #statistics
     stats = tools.Statistics(key=lambda ind: ind.fitness.values)
@@ -106,7 +126,7 @@ def main():
     print("Best Ever Fitness = ", best.fitness.values[0])
 
     print("--- TSP best route --- ")
-    tsp.printItems(best)
+    tsp.printResult(best)
 
     df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
     print(df_promedios.to_string())
@@ -149,7 +169,7 @@ def main():
     print("Best Ever Fitness = ", best.fitness.values[0])
 
     print("--- TSP best route --- ")
-    knapsack.printItems(best)
+    tsp.printResult(best)
 
     df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
     print(df_promedios.to_string())
@@ -193,7 +213,7 @@ def main():
     print("Best Ever Fitness = ", best.fitness.values[0])
 
     print("--- TSP best route --- ")
-    knapsack.printItems(best)
+    tsp.printResult(best)
 
 
     df_promedios = df.groupby(['algoritmo', 'gen']).agg({'max':['mean', 'std']})
